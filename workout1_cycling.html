@@ -10,11 +10,23 @@
   :root {
     --work: #E8372A; --recover: #2A7AE8; --warmup: #1DB87A; --cooldown: #E89B2A;
     --bg: #0A0A0A; --surface: #141414; --surface2: #1E1E1E;
-    --text: #F5F5F0; --muted: #666;
+    --text: #F5F5F0; --muted: #666; --spotify: #1DB954;
   }
   body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; min-height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
 
-  #splash { position: fixed; inset: 0; background: var(--bg); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 100; padding: 2rem; transition: opacity 0.5s; }
+  #login { position: fixed; inset: 0; background: var(--bg); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 200; padding: 2rem; text-align: center; }
+  #login h1 { font-family: 'Bebas Neue', sans-serif; font-size: 52px; letter-spacing: 0.04em; line-height: 0.9; margin-bottom: 1rem; }
+  #login h1 span { color: var(--work); }
+  #login p { color: var(--muted); font-size: 13px; line-height: 1.6; max-width: 260px; margin-bottom: 2rem; }
+  #spotify-login-btn { background: var(--spotify); color: #000; border: none; font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 0.1em; padding: 16px 0; border-radius: 50px; cursor: pointer; width: 100%; max-width: 300px; display: flex; align-items: center; justify-content: center; gap: 10px; transition: transform 0.1s; }
+  #spotify-login-btn:active { transform: scale(0.97); }
+  #spotify-login-btn svg { width: 24px; height: 24px; }
+
+  #loading { display: none; position: fixed; inset: 0; background: var(--bg); flex-direction: column; align-items: center; justify-content: center; z-index: 150; }
+  #loading p { color: var(--muted); font-size: 14px; margin-top: 1rem; }
+  .spinner { width: 40px; height: 40px; border: 3px solid var(--surface2); border-top-color: var(--spotify); border-radius: 50%; animation: spin 0.8s linear infinite; }
+
+  #splash { position: fixed; inset: 0; background: var(--bg); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 100; padding: 2rem; }
   #splash h1 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(52px, 16vw, 96px); letter-spacing: 0.04em; line-height: 0.9; text-align: center; }
   #splash h1 span { color: var(--work); }
   #splash p { margin-top: 1.2rem; color: var(--muted); font-size: 13px; text-align: center; line-height: 1.6; max-width: 280px; }
@@ -24,21 +36,18 @@
   .splash-meta .lbl { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; }
   #start-btn { background: var(--work); color: #fff; border: none; font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: 0.1em; padding: 18px 0; border-radius: 4px; cursor: pointer; width: 100%; max-width: 320px; transition: transform 0.1s; }
   #start-btn:active { transform: scale(0.97); }
+  #spotify-status { display: flex; align-items: center; gap: 8px; margin-top: 1rem; font-size: 12px; color: var(--spotify); }
+  #spotify-status .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--spotify); }
 
   #app { display: none; flex-direction: column; height: 100vh; }
-
   #prog-wrap { height: 3px; background: var(--surface2); flex-shrink: 0; }
   #prog-bar { height: 100%; background: var(--work); width: 0%; transition: width 1s linear, background 0.4s; }
-
   #header { padding: 12px 20px 8px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
   .wk-label { font-family: 'Bebas Neue', sans-serif; font-size: 14px; letter-spacing: 0.1em; color: var(--muted); }
   #elapsed { font-family: 'Bebas Neue', sans-serif; font-size: 14px; color: var(--muted); }
-
   #main { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 0 24px 8px; }
-
   #phase-label { font-family: 'Bebas Neue', sans-serif; font-size: 12px; letter-spacing: 0.22em; color: var(--work); margin-bottom: 8px; transition: color 0.4s; }
   #iv-name { font-family: 'Bebas Neue', sans-serif; font-size: clamp(22px, 6.5vw, 36px); text-align: center; line-height: 1.1; margin-bottom: 26px; }
-
   #ring-wrap { position: relative; width: 188px; height: 188px; margin-bottom: 20px; }
   #ring-svg { transform: rotate(-90deg); width: 188px; height: 188px; }
   #ring-bg { fill: none; stroke: var(--surface2); stroke-width: 10; }
@@ -46,26 +55,20 @@
   #ring-center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
   #countdown { font-family: 'Bebas Neue', sans-serif; font-size: 62px; line-height: 1; }
   #cd-sub { font-size: 11px; color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase; margin-top: 2px; }
-
   #badges { display: flex; gap: 10px; margin-bottom: 18px; }
-  .badge { padding: 5px 14px; border-radius: 2px; font-size: 12px; font-weight: 500; letter-spacing: 0.04em; }
+  .badge { padding: 5px 14px; border-radius: 2px; font-size: 12px; font-weight: 500; }
   .b-bpm { background: rgba(232,55,42,0.12); color: #E8A09A; border: 1px solid rgba(232,55,42,0.25); }
   .b-lvl { background: rgba(29,184,122,0.12); color: #6EDDB3; border: 1px solid rgba(29,184,122,0.25); }
-
   #music-card { background: var(--surface); border: 1px solid #222; border-radius: 8px; padding: 12px 14px; width: 100%; max-width: 340px; display: flex; align-items: center; gap: 12px; }
-  .yt-logo { width: 34px; height: 34px; background: #FF0000; border-radius: 6px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-  .yt-logo svg { width: 18px; height: 18px; }
+  #album-art { width: 42px; height: 42px; border-radius: 4px; background: var(--surface2); flex-shrink: 0; }
   #music-info { flex: 1; min-width: 0; }
   #music-title { font-size: 13px; font-weight: 500; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  #music-time { font-size: 11px; color: var(--muted); margin-top: 3px; }
-  #open-btn { background: #FF0000; color: #fff; border: none; font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 500; padding: 7px 13px; border-radius: 4px; cursor: pointer; white-space: nowrap; flex-shrink: 0; transition: opacity 0.15s; }
-  #open-btn:active { opacity: 0.8; }
-
+  #music-time { font-size: 11px; color: var(--muted); margin-top: 2px; }
+  #play-state { font-size: 11px; color: var(--spotify); margin-top: 2px; }
   #next-strip { background: var(--surface); border-top: 1px solid #1A1A1A; padding: 10px 20px; flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; }
   .nlabel { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; }
   #next-name { font-size: 13px; font-weight: 500; color: var(--text); margin-top: 2px; }
-  #next-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--recover); flex-shrink: 0; }
-
+  #next-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
   #controls { padding: 10px 20px 26px; display: flex; gap: 10px; flex-shrink: 0; }
   #controls button { flex: 1; background: var(--surface); border: 1px solid #222; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500; padding: 13px; border-radius: 4px; cursor: pointer; transition: background 0.15s, transform 0.1s; }
   #controls button:active { transform: scale(0.97); background: var(--surface2); }
@@ -79,6 +82,7 @@
   .done-stat .lbl { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; }
   #restart-btn { background: var(--surface); border: 1px solid #222; color: var(--text); font-family: 'Bebas Neue', sans-serif; font-size: 18px; letter-spacing: 0.1em; padding: 16px 48px; border-radius: 4px; cursor: pointer; margin-top: 1rem; }
 
+  @keyframes spin { to { transform: rotate(360deg); } }
   @keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.035)} }
   .pulse { animation: pulse 1s ease-in-out infinite; }
   @keyframes flash { 0%,100%{opacity:1} 50%{opacity:0.1} }
@@ -87,6 +91,20 @@
 </head>
 <body>
 
+<div id="login">
+  <h1>HIIT<br><span>PYRAMID</span></h1>
+  <p>Müziği otomatik çalmak için Spotify hesabınla giriş yap.</p>
+  <button id="spotify-login-btn" onclick="loginSpotify()">
+    <svg viewBox="0 0 24 24" fill="black"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
+    Spotify ile Giriş Yap
+  </button>
+</div>
+
+<div id="loading">
+  <div class="spinner"></div>
+  <p>Spotify bağlanıyor...</p>
+</div>
+
 <div id="splash">
   <h1>HIIT<br><span>PYRAMID</span></h1>
   <div class="splash-meta">
@@ -94,8 +112,9 @@
     <div><div class="val">5</div><div class="lbl">Sprint</div></div>
     <div><div class="val">~460</div><div class="lbl">Kcal</div></div>
   </div>
-  <p>YouTube Music'i hazır tut. Her interval başında kırmızı butona bas, şarkı açılır.</p>
+  <p>Spotify bağlı — müzik otomatik çalacak.</p>
   <button id="start-btn" onclick="startWorkout()">BAŞLAT</button>
+  <div id="spotify-status"><div class="dot"></div><span id="spotify-user">Spotify bağlı</span></div>
 </div>
 
 <div id="app">
@@ -104,11 +123,9 @@
     <div class="wk-label">WORKOUT 1 — HIIT PYRAMID</div>
     <div id="elapsed">00:00</div>
   </div>
-
   <div id="main">
     <div id="phase-label">ISINMA</div>
     <div id="iv-name">Kolay pedal — ritim yakala</div>
-
     <div id="ring-wrap">
       <svg id="ring-svg" viewBox="0 0 188 188">
         <circle id="ring-bg" cx="94" cy="94" r="84"/>
@@ -119,24 +136,19 @@
         <div id="cd-sub">kalan</div>
       </div>
     </div>
-
     <div id="badges">
       <div class="badge b-bpm" id="b-bpm">100–110 bpm</div>
       <div class="badge b-lvl" id="b-lvl">L3</div>
     </div>
-
     <div id="music-card">
-      <div class="yt-logo">
-        <svg viewBox="0 0 24 24" fill="white"><path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/></svg>
-      </div>
+      <div id="album-art"></div>
       <div id="music-info">
         <div id="music-title">Dua Lipa — Levitating</div>
         <div id="music-time">başından itibaren</div>
+        <div id="play-state">♪ çalıyor</div>
       </div>
-      <button id="open-btn" onclick="openMusic()">▶ YouTube'da Aç</button>
     </div>
   </div>
-
   <div id="next-strip">
     <div>
       <div class="nlabel">Sonraki interval</div>
@@ -144,7 +156,6 @@
     </div>
     <div id="next-dot"></div>
   </div>
-
   <div id="controls">
     <button id="btn-pause" onclick="togglePause()">⏸ Duraklat</button>
     <button id="btn-skip" onclick="skipInterval()">Atla →</button>
@@ -161,39 +172,108 @@
   <button id="restart-btn" onclick="restartWorkout()">TEKRAR BAŞLAT</button>
 </div>
 
+<script src="https://sdk.scdn.co/spotify-player.js"></script>
 <script>
+const CLIENT_ID = '6768505786944595a799a0a79372c2f0';
+const REDIRECT_URI = 'https://bulutsuicmez.github.io/workout-timer/workout1_cycling.html';
+const SCOPES = 'streaming user-read-email user-read-private user-modify-playback-state user-read-playback-state';
 const CIRC = 2 * Math.PI * 84;
 
 const intervals = [
-  { name:"Kolay pedal — ritim yakala",  phase:"ISINMA",     type:"warmup",  dur:180, bpm:"100–110 bpm", lvl:"L3",  music:"Dua Lipa — Levitating",           mtime:"başından itibaren", ytq:"Dua Lipa Levitating" },
-  { name:"Tempolu ısınma",              phase:"ISINMA",     type:"warmup",  dur:120, bpm:"115–125 bpm", lvl:"L4",  music:"The Weeknd — Blinding Lights",     mtime:"başından itibaren", ytq:"The Weeknd Blinding Lights" },
-  { name:"Sprint #1 — tam gaz",         phase:"SPRİNT",     type:"work",    dur:60,  bpm:"155–165 bpm", lvl:"L8",  music:"Eminem — Till I Collapse",         mtime:"başından itibaren", ytq:"Eminem Till I Collapse" },
-  { name:"Aktif toparlanma",            phase:"TOPARLANMA", type:"recover", dur:120, bpm:"110–120 bpm", lvl:"L4",  music:"Calvin Harris — Summer",           mtime:"1:00'dan itibaren", ytq:"Calvin Harris Summer" },
-  { name:"Sprint #2 — daha sert",       phase:"SPRİNT",     type:"work",    dur:90,  bpm:"160–170 bpm", lvl:"L9",  music:"Kanye West — POWER",               mtime:"başından itibaren", ytq:"Kanye West POWER" },
-  { name:"Aktif toparlanma",            phase:"TOPARLANMA", type:"recover", dur:150, bpm:"110–120 bpm", lvl:"L4",  music:"Pharrell Williams — Happy",        mtime:"0:30'dan itibaren", ytq:"Pharrell Williams Happy" },
-  { name:"Sprint #3 — TEPE",            phase:"SPRİNT",     type:"work",    dur:90,  bpm:"165–175 bpm", lvl:"L10", music:"Metallica — Master of Puppets",    mtime:"1:00'dan itibaren", ytq:"Metallica Master of Puppets" },
-  { name:"Aktif toparlanma — uzun",     phase:"TOPARLANMA", type:"recover", dur:210, bpm:"105–115 bpm", lvl:"L3",  music:"Avicii — Wake Me Up",              mtime:"başından itibaren", ytq:"Avicii Wake Me Up" },
-  { name:"Sprint #4 — aşağı pyramid",  phase:"SPRİNT",     type:"work",    dur:90,  bpm:"160–170 bpm", lvl:"L9",  music:"Imagine Dragons — Believer",       mtime:"0:30'dan itibaren", ytq:"Imagine Dragons Believer" },
-  { name:"Aktif toparlanma",            phase:"TOPARLANMA", type:"recover", dur:90,  bpm:"110–120 bpm", lvl:"L4",  music:"Kygo — Firestone",                 mtime:"başından itibaren", ytq:"Kygo Firestone" },
-  { name:"Sprint #5 — son hamle",       phase:"SPRİNT",     type:"work",    dur:90,  bpm:"155–165 bpm", lvl:"L8",  music:"Eminem — Lose Yourself",           mtime:"başından itibaren", ytq:"Eminem Lose Yourself" },
-  { name:"Aktif toparlanma",            phase:"TOPARLANMA", type:"recover", dur:120, bpm:"110–120 bpm", lvl:"L4",  music:"Coldplay — Viva la Vida",          mtime:"başından itibaren", ytq:"Coldplay Viva la Vida" },
-  { name:"Tempo düşürme",              phase:"SOĞUMA",     type:"cooldown",dur:150, bpm:"115–120 bpm", lvl:"L3",  music:"Ed Sheeran — Shape of You",        mtime:"başından itibaren", ytq:"Ed Sheeran Shape of You" },
-  { name:"Hafif pedal — nefes normala",phase:"SOĞUMA",     type:"cooldown",dur:150, bpm:"95–105 bpm",  lvl:"L2",  music:"Jack Johnson — Better Together",   mtime:"başından itibaren", ytq:"Jack Johnson Better Together" },
+  { name:"Kolay pedal — ritim yakala",  phase:"ISINMA",     type:"warmup",  dur:180, bpm:"100–110 bpm", lvl:"L3",  music:"Dua Lipa — Levitating",          mtime:"başından itibaren", uri:"spotify:track:39LLxExYz6ewLAcYrzQQyP" },
+  { name:"Tempolu ısınma",              phase:"ISINMA",     type:"warmup",  dur:120, bpm:"115–125 bpm", lvl:"L4",  music:"The Weeknd — Blinding Lights",    mtime:"başından itibaren", uri:"spotify:track:0VjIjW4GlUZAMYd2vXMi3b" },
+  { name:"Sprint #1 — tam gaz",         phase:"SPRİNT",     type:"work",    dur:60,  bpm:"155–165 bpm", lvl:"L8",  music:"Eminem — Till I Collapse",        mtime:"başından itibaren", uri:"spotify:track:1lChi5ZBHJvIfrGHT7bQHU" },
+  { name:"Aktif toparlanma",            phase:"TOPARLANMA", type:"recover", dur:120, bpm:"110–120 bpm", lvl:"L4",  music:"Calvin Harris — Summer",          mtime:"1:00'dan itibaren", uri:"spotify:track:6TF6UaBaVqiVgSsTFirQI2", pos:60000 },
+  { name:"Sprint #2 — daha sert",       phase:"SPRİNT",     type:"work",    dur:90,  bpm:"160–170 bpm", lvl:"L9",  music:"Kanye West — POWER",              mtime:"başından itibaren", uri:"spotify:track:2gZUPNdnz5Y45eiGxpHGSc" },
+  { name:"Aktif toparlanma",            phase:"TOPARLANMA", type:"recover", dur:150, bpm:"110–120 bpm", lvl:"L4",  music:"Pharrell Williams — Happy",       mtime:"0:30'dan itibaren", uri:"spotify:track:60nZcImufyMA1MKQY3dcCH", pos:30000 },
+  { name:"Sprint #3 — TEPE",            phase:"SPRİNT",     type:"work",    dur:90,  bpm:"165–175 bpm", lvl:"L10", music:"Metallica — Master of Puppets",   mtime:"1:00'dan itibaren", uri:"spotify:track:7eJMfftS33KTjuF7lX2AZx", pos:60000 },
+  { name:"Aktif toparlanma — uzun",     phase:"TOPARLANMA", type:"recover", dur:210, bpm:"105–115 bpm", lvl:"L3",  music:"Avicii — Wake Me Up",             mtime:"başından itibaren", uri:"spotify:track:3yfqSUWxFvZELEM4PmlwIR" },
+  { name:"Sprint #4 — aşağı pyramid",  phase:"SPRİNT",     type:"work",    dur:90,  bpm:"160–170 bpm", lvl:"L9",  music:"Imagine Dragons — Believer",      mtime:"0:30'dan itibaren", uri:"spotify:track:0pqnGHJpmpxLKifKRmU6WP", pos:30000 },
+  { name:"Aktif toparlanma",            phase:"TOPARLANMA", type:"recover", dur:90,  bpm:"110–120 bpm", lvl:"L4",  music:"Kygo — Firestone",                mtime:"başından itibaren", uri:"spotify:track:2QjOHCTQ1Kkjs0cnJtOkqz" },
+  { name:"Sprint #5 — son hamle",       phase:"SPRİNT",     type:"work",    dur:90,  bpm:"155–165 bpm", lvl:"L8",  music:"Eminem — Lose Yourself",          mtime:"başından itibaren", uri:"spotify:track:5Z01UMMf7V1o0MzF86s6WJ" },
+  { name:"Aktif toparlanma",            phase:"TOPARLANMA", type:"recover", dur:120, bpm:"110–120 bpm", lvl:"L4",  music:"Coldplay — Viva la Vida",         mtime:"başından itibaren", uri:"spotify:track:1mea3bSkSGXuIRvnydlB5b" },
+  { name:"Tempo düşürme",              phase:"SOĞUMA",     type:"cooldown",dur:150, bpm:"115–120 bpm", lvl:"L3",  music:"Ed Sheeran — Shape of You",       mtime:"başından itibaren", uri:"spotify:track:7qiZfU4dY1lWllzX7mPBI3" },
+  { name:"Hafif pedal — nefes normala",phase:"SOĞUMA",     type:"cooldown",dur:150, bpm:"95–105 bpm",  lvl:"L2",  music:"Jack Johnson — Better Together",  mtime:"başından itibaren", uri:"spotify:track:3MjUtNVVq3C8Fn0MP3zhXa" },
 ];
 
 const colors = { warmup:"#1DB87A", work:"#E8372A", recover:"#2A7AE8", cooldown:"#E89B2A" };
-
+let accessToken=null, deviceId=null, player=null;
 let idx=0, remaining=0, totalElapsed=0, paused=false, timer=null, wakelock=null;
+
+function generateCodeVerifier(len) {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  const arr = new Uint8Array(len);
+  crypto.getRandomValues(arr);
+  return Array.from(arr).map(b => chars[b % chars.length]).join('');
+}
+
+async function generateCodeChallenge(verifier) {
+  const enc = new TextEncoder().encode(verifier);
+  const hash = await crypto.subtle.digest('SHA-256', enc);
+  return btoa(String.fromCharCode(...new Uint8Array(hash))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=/g,'');
+}
+
+async function loginSpotify() {
+  const verifier = generateCodeVerifier(128);
+  const challenge = await generateCodeChallenge(verifier);
+  localStorage.setItem('code_verifier', verifier);
+  const params = new URLSearchParams({ client_id:CLIENT_ID, response_type:'code', redirect_uri:REDIRECT_URI, scope:SCOPES, code_challenge_method:'S256', code_challenge:challenge });
+  window.location = `https://accounts.spotify.com/authorize?${params}`;
+}
+
+async function exchangeToken(code) {
+  const verifier = localStorage.getItem('code_verifier');
+  const res = await fetch('https://accounts.spotify.com/api/token', {
+    method:'POST',
+    headers:{'Content-Type':'application/x-www-form-urlencoded'},
+    body: new URLSearchParams({ client_id:CLIENT_ID, grant_type:'authorization_code', code, redirect_uri:REDIRECT_URI, code_verifier:verifier })
+  });
+  const data = await res.json();
+  accessToken = data.access_token;
+  localStorage.setItem('spotify_token', accessToken);
+  localStorage.setItem('spotify_token_exp', Date.now() + data.expires_in * 1000);
+  window.history.replaceState({}, '', REDIRECT_URI);
+}
+
+function getStoredToken() {
+  const token = localStorage.getItem('spotify_token');
+  const exp = localStorage.getItem('spotify_token_exp');
+  if (token && exp && Date.now() < parseInt(exp)) return token;
+  return null;
+}
+
+window.onSpotifyWebPlaybackSDKReady = () => {
+  player = new Spotify.Player({ name:'Workout Timer', getOAuthToken: cb => cb(accessToken), volume:0.8 });
+  player.addListener('ready', ({ device_id }) => {
+    deviceId = device_id;
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('splash').style.display = 'flex';
+    fetch('https://api.spotify.com/v1/me', { headers:{ Authorization:`Bearer ${accessToken}` } })
+      .then(r=>r.json()).then(d=>{ document.getElementById('spotify-user').textContent = d.display_name + ' bağlı'; }).catch(()=>{});
+  });
+  player.connect();
+};
+
+async function playTrack(uri, pos=0) {
+  if (!deviceId || !accessToken) return;
+  await fetch(`https://api.spotify.com/v1/me/player/play?device_id=${deviceId}`, {
+    method:'PUT', headers:{ Authorization:`Bearer ${accessToken}`, 'Content-Type':'application/json' },
+    body: JSON.stringify({ uris:[uri], position_ms:pos })
+  });
+}
+async function pauseTrack() {
+  if (!deviceId || !accessToken) return;
+  await fetch('https://api.spotify.com/v1/me/player/pause', { method:'PUT', headers:{ Authorization:`Bearer ${accessToken}` } });
+}
+async function resumeTrack() {
+  if (!deviceId || !accessToken) return;
+  await fetch('https://api.spotify.com/v1/me/player/play', { method:'PUT', headers:{ Authorization:`Bearer ${accessToken}` } });
+}
 
 function fmt(s){ return `${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`; }
 
-function openMusic(){
-  const q = encodeURIComponent(intervals[idx].ytq);
-  location.href = `https://music.youtube.com/search?q=${q}`;
-}
-
 function setColor(type){
-  const c = colors[type] || "#E8372A";
+  const c = colors[type]||"#E8372A";
   document.getElementById('ring-fill').style.stroke = c;
   document.getElementById('phase-label').style.color = c;
   document.getElementById('prog-bar').style.background = c;
@@ -210,82 +290,68 @@ function renderInterval(i){
   setColor(iv.type);
   remaining = iv.dur;
   updateRing(0, iv.dur);
-
+  playTrack(iv.uri, iv.pos||0);
   const next = intervals[i+1];
-  if(next){
-    document.getElementById('next-name').textContent = next.name;
-    document.getElementById('next-dot').style.background = colors[next.type];
-    document.getElementById('next-strip').style.display = 'flex';
-  } else {
-    document.getElementById('next-strip').style.display = 'none';
-  }
-
+  if(next){ document.getElementById('next-name').textContent=next.name; document.getElementById('next-dot').style.background=colors[next.type]||'#666'; document.getElementById('next-strip').style.display='flex'; }
+  else { document.getElementById('next-strip').style.display='none'; }
   const card = document.getElementById('music-card');
   card.classList.remove('flash'); void card.offsetWidth; card.classList.add('flash');
-
   const rw = document.getElementById('ring-wrap');
-  iv.type === 'work' ? rw.classList.add('pulse') : rw.classList.remove('pulse');
+  iv.type==='work' ? rw.classList.add('pulse') : rw.classList.remove('pulse');
 }
 
-function updateRing(elapsed, total){
-  document.getElementById('ring-fill').style.strokeDashoffset = CIRC * (elapsed / total);
-}
+function updateRing(e,t){ document.getElementById('ring-fill').style.strokeDashoffset = CIRC*(e/t); }
 
 function updateDisplay(){
   document.getElementById('countdown').textContent = fmt(remaining);
   const iv = intervals[idx];
-  updateRing(iv.dur - remaining, iv.dur);
+  updateRing(iv.dur-remaining, iv.dur);
   const total = intervals.reduce((a,b)=>a+b.dur,0);
-  document.getElementById('prog-bar').style.width = (totalElapsed/total*100)+'%';
-  document.getElementById('elapsed').textContent = fmt(totalElapsed);
+  document.getElementById('prog-bar').style.width=(totalElapsed/total*100)+'%';
+  document.getElementById('elapsed').textContent=fmt(totalElapsed);
 }
 
 function tick(){
   if(paused) return;
   remaining--; totalElapsed++;
   updateDisplay();
-  if(remaining <= 0){
-    idx++;
-    if(idx >= intervals.length){ endWorkout(); return; }
-    renderInterval(idx);
-  }
+  if(remaining<=0){ idx++; if(idx>=intervals.length){ endWorkout(); return; } renderInterval(idx); }
 }
 
 function startWorkout(){
-  const sp = document.getElementById('splash');
-  sp.style.opacity = '0';
-  setTimeout(()=>{ sp.style.display='none'; document.getElementById('app').style.display='flex'; }, 500);
+  document.getElementById('splash').style.opacity='0';
+  setTimeout(()=>{ document.getElementById('splash').style.display='none'; document.getElementById('app').style.display='flex'; },500);
   idx=0; totalElapsed=0; paused=false;
   renderInterval(0); updateDisplay();
-  timer = setInterval(tick, 1000);
+  timer=setInterval(tick,1000);
   if('wakeLock' in navigator) navigator.wakeLock.request('screen').then(wl=>wakelock=wl).catch(()=>{});
 }
 
 function togglePause(){
-  paused = !paused;
-  document.getElementById('btn-pause').textContent = paused ? '▶ Devam' : '⏸ Duraklat';
+  paused=!paused;
+  paused ? pauseTrack() : resumeTrack();
+  document.getElementById('btn-pause').textContent=paused?'▶ Devam':'⏸ Duraklat';
 }
 
-function skipInterval(){
-  totalElapsed += remaining; idx++;
-  if(idx >= intervals.length){ endWorkout(); return; }
-  renderInterval(idx); updateDisplay();
-}
+function skipInterval(){ totalElapsed+=remaining; idx++; if(idx>=intervals.length){ endWorkout(); return; } renderInterval(idx); updateDisplay(); }
 
-function endWorkout(){
-  clearInterval(timer);
-  if(wakelock) wakelock.release();
-  document.getElementById('app').style.display = 'none';
-  document.getElementById('done').style.display = 'flex';
-}
+function endWorkout(){ clearInterval(timer); if(wakelock) wakelock.release(); pauseTrack(); document.getElementById('app').style.display='none'; document.getElementById('done').style.display='flex'; }
 
-function restartWorkout(){
-  document.getElementById('done').style.display = 'none';
-  idx=0; totalElapsed=0; paused=false;
-  document.getElementById('app').style.display = 'flex';
-  renderInterval(0); updateDisplay();
-  timer = setInterval(tick, 1000);
+function restartWorkout(){ document.getElementById('done').style.display='none'; idx=0; totalElapsed=0; paused=false; document.getElementById('app').style.display='flex'; renderInterval(0); updateDisplay(); timer=setInterval(tick,1000); }
+
+async function init() {
+  const params = new URLSearchParams(window.location.search);
+  const code = params.get('code');
+  if (code) {
+    document.getElementById('login').style.display='none';
+    document.getElementById('loading').style.display='flex';
+    await exchangeToken(code);
+  } else {
+    const stored = getStoredToken();
+    if (stored) { accessToken=stored; document.getElementById('login').style.display='none'; document.getElementById('loading').style.display='flex'; }
+  }
 }
+init();
 </script>
 </body>
 </html>
