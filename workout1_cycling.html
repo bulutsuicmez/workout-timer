@@ -7,418 +7,142 @@
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
   :root {
-    --work: #E8372A;
-    --recover: #2A7AE8;
-    --warmup: #1DB87A;
-    --cooldown: #E89B2A;
-    --bg: #0A0A0A;
-    --surface: #141414;
-    --surface2: #1E1E1E;
-    --text: #F5F5F0;
-    --muted: #888;
+    --work: #E8372A; --recover: #2A7AE8; --warmup: #1DB87A; --cooldown: #E89B2A;
+    --bg: #0A0A0A; --surface: #141414; --surface2: #1E1E1E;
+    --text: #F5F5F0; --muted: #666;
   }
+  body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; min-height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
 
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'DM Sans', sans-serif;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-  }
-
-  /* SPLASH */
-  #splash {
-    position: fixed; inset: 0;
-    background: var(--bg);
-    display: flex; flex-direction: column;
-    align-items: center; justify-content: center;
-    z-index: 100;
-    padding: 2rem;
-    transition: opacity 0.5s;
-  }
-  #splash h1 {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: clamp(52px, 16vw, 96px);
-    letter-spacing: 0.04em;
-    line-height: 0.9;
-    text-align: center;
-    color: var(--text);
-  }
+  #splash { position: fixed; inset: 0; background: var(--bg); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 100; padding: 2rem; transition: opacity 0.5s; }
+  #splash h1 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(52px, 16vw, 96px); letter-spacing: 0.04em; line-height: 0.9; text-align: center; }
   #splash h1 span { color: var(--work); }
-  #splash p {
-    margin-top: 1.5rem;
-    color: var(--muted);
-    font-size: 14px;
-    text-align: center;
-    line-height: 1.6;
-    max-width: 280px;
-  }
-  #splash .meta {
-    display: flex; gap: 24px;
-    margin: 2rem 0;
-  }
-  #splash .meta div {
-    text-align: center;
-  }
-  #splash .meta .val {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 32px;
-    color: var(--text);
-  }
-  #splash .meta .lbl {
-    font-size: 11px;
-    color: var(--muted);
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-  }
-  #start-btn {
-    margin-top: 1rem;
-    background: var(--work);
-    color: #fff;
-    border: none;
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 22px;
-    letter-spacing: 0.1em;
-    padding: 18px 56px;
-    border-radius: 4px;
-    cursor: pointer;
-    width: 100%;
-    max-width: 320px;
-    transition: transform 0.1s, opacity 0.1s;
-  }
-  #start-btn:active { transform: scale(0.97); opacity: 0.9; }
+  #splash p { margin-top: 1.2rem; color: var(--muted); font-size: 13px; text-align: center; line-height: 1.6; max-width: 280px; }
+  .splash-meta { display: flex; gap: 28px; margin: 1.8rem 0; }
+  .splash-meta div { text-align: center; }
+  .splash-meta .val { font-family: 'Bebas Neue', sans-serif; font-size: 36px; }
+  .splash-meta .lbl { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; }
+  #start-btn { background: var(--work); color: #fff; border: none; font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: 0.1em; padding: 18px 0; border-radius: 4px; cursor: pointer; width: 100%; max-width: 320px; transition: transform 0.1s; }
+  #start-btn:active { transform: scale(0.97); }
 
-  /* MAIN APP */
-  #app {
-    display: none;
-    flex-direction: column;
-    height: 100vh;
-    overflow: hidden;
-  }
+  #app { display: none; flex-direction: column; height: 100vh; }
 
-  /* PROGRESS BAR TOP */
-  #progress-bar-wrap {
-    height: 4px;
-    background: var(--surface2);
-    flex-shrink: 0;
-  }
-  #progress-bar {
-    height: 100%;
-    background: var(--work);
-    width: 0%;
-    transition: width 1s linear, background 0.4s;
-  }
+  #prog-wrap { height: 3px; background: var(--surface2); flex-shrink: 0; }
+  #prog-bar { height: 100%; background: var(--work); width: 0%; transition: width 1s linear, background 0.4s; }
 
-  /* HEADER */
-  #header {
-    padding: 14px 20px 10px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-shrink: 0;
-  }
-  #header .wk-label {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 18px;
-    letter-spacing: 0.08em;
-    color: var(--muted);
-  }
-  #header .total-time {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 18px;
-    color: var(--muted);
-  }
+  #header { padding: 12px 20px 8px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+  .wk-label { font-family: 'Bebas Neue', sans-serif; font-size: 14px; letter-spacing: 0.1em; color: var(--muted); }
+  #elapsed { font-family: 'Bebas Neue', sans-serif; font-size: 14px; color: var(--muted); }
 
-  /* MAIN BLOCK */
-  #main-block {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 0 24px;
-    position: relative;
-  }
+  #main { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 0 24px 8px; }
 
-  #phase-label {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 13px;
-    letter-spacing: 0.2em;
-    color: var(--work);
-    margin-bottom: 10px;
-    transition: color 0.4s;
-    text-transform: uppercase;
-  }
+  #phase-label { font-family: 'Bebas Neue', sans-serif; font-size: 12px; letter-spacing: 0.22em; color: var(--work); margin-bottom: 8px; transition: color 0.4s; }
+  #iv-name { font-family: 'Bebas Neue', sans-serif; font-size: clamp(22px, 6.5vw, 36px); text-align: center; line-height: 1.1; margin-bottom: 26px; }
 
-  #interval-name {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: clamp(28px, 8vw, 42px);
-    text-align: center;
-    line-height: 1.1;
-    margin-bottom: 32px;
-    transition: opacity 0.3s;
-  }
-
-  /* RING TIMER */
-  #ring-wrap {
-    position: relative;
-    width: 200px;
-    height: 200px;
-    margin-bottom: 28px;
-  }
-  #ring-svg {
-    transform: rotate(-90deg);
-    width: 200px; height: 200px;
-  }
+  #ring-wrap { position: relative; width: 188px; height: 188px; margin-bottom: 20px; }
+  #ring-svg { transform: rotate(-90deg); width: 188px; height: 188px; }
   #ring-bg { fill: none; stroke: var(--surface2); stroke-width: 10; }
-  #ring-fill {
-    fill: none;
-    stroke: var(--work);
-    stroke-width: 10;
-    stroke-linecap: round;
-    stroke-dasharray: 565;
-    stroke-dashoffset: 0;
-    transition: stroke-dashoffset 1s linear, stroke 0.4s;
-  }
-  #ring-time {
-    position: absolute;
-    inset: 0;
-    display: flex; flex-direction: column;
-    align-items: center; justify-content: center;
-  }
-  #countdown {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 64px;
-    line-height: 1;
-    letter-spacing: 0.02em;
-  }
-  #countdown-sub {
-    font-size: 12px;
-    color: var(--muted);
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    margin-top: 2px;
-  }
+  #ring-fill { fill: none; stroke: var(--work); stroke-width: 10; stroke-linecap: round; stroke-dasharray: 528; stroke-dashoffset: 0; transition: stroke-dashoffset 1s linear, stroke 0.4s; }
+  #ring-center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  #countdown { font-family: 'Bebas Neue', sans-serif; font-size: 62px; line-height: 1; }
+  #cd-sub { font-size: 11px; color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase; margin-top: 2px; }
 
-  /* BPM / LEVEL BADGES */
-  #badges {
-    display: flex; gap: 12px;
-    margin-bottom: 24px;
-  }
-  .badge {
-    padding: 6px 16px;
-    border-radius: 2px;
-    font-size: 13px;
-    font-weight: 500;
-    letter-spacing: 0.05em;
-  }
-  .badge-bpm { background: rgba(232,55,42,0.15); color: #E8A09A; border: 1px solid rgba(232,55,42,0.3); }
-  .badge-lvl { background: rgba(29,184,122,0.15); color: #6EDDB3; border: 1px solid rgba(29,184,122,0.3); }
+  #badges { display: flex; gap: 10px; margin-bottom: 18px; }
+  .badge { padding: 5px 14px; border-radius: 2px; font-size: 12px; font-weight: 500; letter-spacing: 0.04em; }
+  .b-bpm { background: rgba(232,55,42,0.12); color: #E8A09A; border: 1px solid rgba(232,55,42,0.25); }
+  .b-lvl { background: rgba(29,184,122,0.12); color: #6EDDB3; border: 1px solid rgba(29,184,122,0.25); }
 
-  /* MUSIC CARD */
-  #music-card {
-    background: var(--surface);
-    border: 1px solid #2A2A2A;
-    border-radius: 6px;
-    padding: 14px 18px;
-    width: 100%;
-    max-width: 360px;
-    display: flex; align-items: center; gap: 14px;
-  }
-  #music-icon {
-    width: 38px; height: 38px;
-    background: var(--surface2);
-    border-radius: 4px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 18px;
-    flex-shrink: 0;
-  }
+  #music-card { background: var(--surface); border: 1px solid #222; border-radius: 8px; padding: 12px 14px; width: 100%; max-width: 340px; display: flex; align-items: center; gap: 12px; }
+  .yt-logo { width: 34px; height: 34px; background: #FF0000; border-radius: 6px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .yt-logo svg { width: 18px; height: 18px; }
   #music-info { flex: 1; min-width: 0; }
-  #music-title {
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--text);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  #music-time {
-    font-size: 11px;
-    color: var(--muted);
-    margin-top: 3px;
-  }
+  #music-title { font-size: 13px; font-weight: 500; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  #music-time { font-size: 11px; color: var(--muted); margin-top: 3px; }
+  #open-btn { background: #FF0000; color: #fff; border: none; font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 500; padding: 7px 13px; border-radius: 4px; cursor: pointer; white-space: nowrap; flex-shrink: 0; transition: opacity 0.15s; }
+  #open-btn:active { opacity: 0.8; }
 
-  /* NEXT UP */
-  #next-up {
-    position: absolute;
-    bottom: 16px;
-    left: 24px; right: 24px;
-    text-align: center;
-    font-size: 12px;
-    color: var(--muted);
-  }
-  #next-up strong { color: var(--text); font-weight: 500; }
+  #next-strip { background: var(--surface); border-top: 1px solid #1A1A1A; padding: 10px 20px; flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; }
+  .nlabel { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; }
+  #next-name { font-size: 13px; font-weight: 500; color: var(--text); margin-top: 2px; }
+  #next-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--recover); flex-shrink: 0; }
 
-  /* CONTROLS */
-  #controls {
-    padding: 16px 24px 32px;
-    display: flex; gap: 12px;
-    flex-shrink: 0;
-  }
-  #controls button {
-    flex: 1;
-    background: var(--surface);
-    border: 1px solid #2A2A2A;
-    color: var(--text);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 14px;
-    font-weight: 500;
-    padding: 14px;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background 0.15s, transform 0.1s;
-  }
+  #controls { padding: 10px 20px 26px; display: flex; gap: 10px; flex-shrink: 0; }
+  #controls button { flex: 1; background: var(--surface); border: 1px solid #222; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500; padding: 13px; border-radius: 4px; cursor: pointer; transition: background 0.15s, transform 0.1s; }
   #controls button:active { transform: scale(0.97); background: var(--surface2); }
   #btn-skip { color: var(--muted); }
 
-  /* NEXT INTERVAL STRIP */
-  #next-strip {
-    background: var(--surface);
-    border-top: 1px solid #1E1E1E;
-    padding: 12px 24px;
-    flex-shrink: 0;
-    display: flex; align-items: center; justify-content: space-between;
-  }
-  #next-strip .label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; }
-  #next-strip .name { font-size: 13px; font-weight: 500; color: var(--text); margin-top: 2px; }
-  #next-strip .type-dot {
-    width: 8px; height: 8px;
-    border-radius: 50%;
-    background: var(--recover);
-    flex-shrink: 0;
-  }
+  #done { display: none; position: fixed; inset: 0; background: var(--bg); flex-direction: column; align-items: center; justify-content: center; padding: 2rem; text-align: center; }
+  #done h2 { font-family: 'Bebas Neue', sans-serif; font-size: 80px; line-height: 0.85; color: var(--work); }
+  #done p { color: var(--muted); font-size: 14px; margin-top: 1.2rem; line-height: 1.6; }
+  .done-stats { display: flex; gap: 36px; margin: 2rem 0; }
+  .done-stat .val { font-family: 'Bebas Neue', sans-serif; font-size: 44px; }
+  .done-stat .lbl { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; }
+  #restart-btn { background: var(--surface); border: 1px solid #222; color: var(--text); font-family: 'Bebas Neue', sans-serif; font-size: 18px; letter-spacing: 0.1em; padding: 16px 48px; border-radius: 4px; cursor: pointer; margin-top: 1rem; }
 
-  /* DONE SCREEN */
-  #done {
-    display: none;
-    position: fixed; inset: 0;
-    background: var(--bg);
-    flex-direction: column;
-    align-items: center; justify-content: center;
-    padding: 2rem;
-    text-align: center;
-  }
-  #done h2 {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 72px;
-    line-height: 0.9;
-    color: var(--work);
-  }
-  #done p { color: var(--muted); font-size: 15px; margin-top: 1rem; line-height: 1.6; }
-  #done .stats {
-    display: flex; gap: 32px; margin: 2rem 0;
-  }
-  #done .stat-val {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 40px;
-    color: var(--text);
-  }
-  #done .stat-lbl {
-    font-size: 11px; color: var(--muted);
-    text-transform: uppercase; letter-spacing: 0.1em;
-  }
-  #restart-btn {
-    background: var(--surface);
-    border: 1px solid #2A2A2A;
-    color: var(--text);
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 18px;
-    letter-spacing: 0.1em;
-    padding: 16px 48px;
-    border-radius: 4px;
-    cursor: pointer;
-    margin-top: 1rem;
-  }
-
-  /* PULSE ANIMATION */
-  @keyframes pulse-ring {
-    0% { transform: scale(1); opacity: 1; }
-    50% { transform: scale(1.04); opacity: 0.7; }
-    100% { transform: scale(1); opacity: 1; }
-  }
-  .pulse { animation: pulse-ring 1s ease-in-out infinite; }
-
-  @keyframes flash {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.2; }
-  }
-  .flash { animation: flash 0.4s ease 3; }
+  @keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.035)} }
+  .pulse { animation: pulse 1s ease-in-out infinite; }
+  @keyframes flash { 0%,100%{opacity:1} 50%{opacity:0.1} }
+  .flash { animation: flash 0.35s ease 3; }
 </style>
 </head>
 <body>
 
-<!-- SPLASH -->
 <div id="splash">
   <h1>HIIT<br><span>PYRAMID</span></h1>
-  <div class="meta">
+  <div class="splash-meta">
     <div><div class="val">30</div><div class="lbl">Dakika</div></div>
     <div><div class="val">5</div><div class="lbl">Sprint</div></div>
     <div><div class="val">~460</div><div class="lbl">Kcal</div></div>
   </div>
-  <p>Spotify'ı açık tut. Her interval geçişinde hangi şarkıyı açman gerektiğini ekranda göreceksin.</p>
+  <p>YouTube Music'i hazır tut. Her interval başında kırmızı butona bas, şarkı açılır.</p>
   <button id="start-btn" onclick="startWorkout()">BAŞLAT</button>
 </div>
 
-<!-- APP -->
 <div id="app">
-  <div id="progress-bar-wrap"><div id="progress-bar"></div></div>
-
+  <div id="prog-wrap"><div id="prog-bar"></div></div>
   <div id="header">
-    <div class="wk-label">WORKOUT 1</div>
-    <div class="total-time" id="total-elapsed">00:00</div>
+    <div class="wk-label">WORKOUT 1 — HIIT PYRAMID</div>
+    <div id="elapsed">00:00</div>
   </div>
 
-  <div id="main-block">
+  <div id="main">
     <div id="phase-label">ISINMA</div>
-    <div id="interval-name">Kolay pedal — ritim yakala</div>
+    <div id="iv-name">Kolay pedal — ritim yakala</div>
 
     <div id="ring-wrap">
-      <svg id="ring-svg" viewBox="0 0 200 200">
-        <circle id="ring-bg" cx="100" cy="100" r="90"/>
-        <circle id="ring-fill" cx="100" cy="100" r="90"/>
+      <svg id="ring-svg" viewBox="0 0 188 188">
+        <circle id="ring-bg" cx="94" cy="94" r="84"/>
+        <circle id="ring-fill" cx="94" cy="94" r="84"/>
       </svg>
-      <div id="ring-time">
+      <div id="ring-center">
         <div id="countdown">3:00</div>
-        <div id="countdown-sub">kalan</div>
+        <div id="cd-sub">kalan</div>
       </div>
     </div>
 
     <div id="badges">
-      <div class="badge badge-bpm" id="badge-bpm">100–110 bpm</div>
-      <div class="badge badge-lvl" id="badge-lvl">L3</div>
+      <div class="badge b-bpm" id="b-bpm">100–110 bpm</div>
+      <div class="badge b-lvl" id="b-lvl">L3</div>
     </div>
 
     <div id="music-card">
-      <div id="music-icon">♪</div>
+      <div class="yt-logo">
+        <svg viewBox="0 0 24 24" fill="white"><path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/></svg>
+      </div>
       <div id="music-info">
         <div id="music-title">Dua Lipa — Levitating</div>
         <div id="music-time">başından itibaren</div>
       </div>
+      <button id="open-btn" onclick="openMusic()">▶ YouTube'da Aç</button>
     </div>
-
-    <div id="next-up"></div>
   </div>
 
   <div id="next-strip">
     <div>
-      <div class="label">Sonraki</div>
-      <div class="name" id="next-name">Tempolu ısınma</div>
+      <div class="nlabel">Sonraki interval</div>
+      <div id="next-name">—</div>
     </div>
-    <div class="type-dot" id="next-dot"></div>
+    <div id="next-dot"></div>
   </div>
 
   <div id="controls">
@@ -427,179 +151,139 @@
   </div>
 </div>
 
-<!-- DONE -->
 <div id="done">
   <h2>BİTTİ<br>LEGEND</h2>
-  <div class="stats">
-    <div><div class="stat-val">30</div><div class="stat-lbl">Dakika</div></div>
-    <div><div class="stat-val">~460</div><div class="stat-lbl">Kcal</div></div>
+  <div class="done-stats">
+    <div class="done-stat"><div class="val">30</div><div class="lbl">Dakika</div></div>
+    <div class="done-stat"><div class="val">~460</div><div class="lbl">Kcal</div></div>
   </div>
-  <p>Harika iş. Soğuma egzersizlerini unutma.</p>
+  <p>Harika iş çıkardın. Soğuma egzersizlerini unutma.</p>
   <button id="restart-btn" onclick="restartWorkout()">TEKRAR BAŞLAT</button>
 </div>
 
 <script>
-const CIRC = 2 * Math.PI * 90;
+const CIRC = 2 * Math.PI * 84;
 
 const intervals = [
-  { name: "Kolay pedal — ritim yakala", phase: "ISINMA", type: "warmup", duration: 180, bpm: "100–110 bpm", level: "L3", music: "Dua Lipa — Levitating", musicTime: "0:00 dan itibaren" },
-  { name: "Tempolu ısınma", phase: "ISINMA", type: "warmup", duration: 120, bpm: "115–125 bpm", level: "L4", music: "The Weeknd — Blinding Lights", musicTime: "0:00 dan itibaren" },
-  { name: "Sprint #1 — tam gaz", phase: "SPRINT", type: "work", duration: 60, bpm: "155–165 bpm", level: "L8", music: "Eminem — Till I Collapse", musicTime: "0:00 dan itibaren" },
-  { name: "Aktif toparlanma", phase: "TOPARLANMA", type: "recover", duration: 120, bpm: "110–120 bpm", level: "L4", music: "Calvin Harris — Summer", musicTime: "1:00 dan itibaren" },
-  { name: "Sprint #2 — daha sert", phase: "SPRINT", type: "work", duration: 90, bpm: "160–170 bpm", level: "L9", music: "Kanye West — POWER", musicTime: "0:00 dan itibaren" },
-  { name: "Aktif toparlanma", phase: "TOPARLANMA", type: "recover", duration: 150, bpm: "110–120 bpm", level: "L4", music: "Pharrell — Happy", musicTime: "0:30 dan itibaren" },
-  { name: "Sprint #3 — TEPE", phase: "SPRINT", type: "work", duration: 90, bpm: "165–175 bpm", level: "L10", music: "Metallica — Master of Puppets", musicTime: "1:00 dan itibaren" },
-  { name: "Aktif toparlanma — uzun", phase: "TOPARLANMA", type: "recover", duration: 210, bpm: "105–115 bpm", level: "L3", music: "Avicii — Wake Me Up", musicTime: "0:00 dan itibaren" },
-  { name: "Sprint #4 — aşağı pyramid", phase: "SPRINT", type: "work", duration: 90, bpm: "160–170 bpm", level: "L9", music: "Imagine Dragons — Believer", musicTime: "0:30 dan itibaren" },
-  { name: "Aktif toparlanma", phase: "TOPARLANMA", type: "recover", duration: 90, bpm: "110–120 bpm", level: "L4", music: "Kygo — Firestone", musicTime: "0:00 dan itibaren" },
-  { name: "Sprint #5 — son hamle", phase: "SPRINT", type: "work", duration: 90, bpm: "155–165 bpm", level: "L8", music: "Eminem — Lose Yourself", musicTime: "0:00 dan itibaren" },
-  { name: "Aktif toparlanma", phase: "TOPARLANMA", type: "recover", duration: 120, bpm: "110–120 bpm", level: "L4", music: "Coldplay — Viva la Vida", musicTime: "0:00 dan itibaren" },
-  { name: "Tempo düşürme", phase: "SOĞUMA", type: "cooldown", duration: 150, bpm: "115–120 bpm", level: "L3", music: "Ed Sheeran — Shape of You", musicTime: "0:00 dan itibaren" },
-  { name: "Hafif pedal — nefes normala dön", phase: "SOĞUMA", type: "cooldown", duration: 150, bpm: "95–105 bpm", level: "L2", music: "Jack Johnson — Better Together", musicTime: "0:00 dan itibaren" },
+  { name:"Kolay pedal — ritim yakala",  phase:"ISINMA",     type:"warmup",  dur:180, bpm:"100–110 bpm", lvl:"L3",  music:"Dua Lipa — Levitating",           mtime:"başından itibaren", ytq:"Dua Lipa Levitating" },
+  { name:"Tempolu ısınma",              phase:"ISINMA",     type:"warmup",  dur:120, bpm:"115–125 bpm", lvl:"L4",  music:"The Weeknd — Blinding Lights",     mtime:"başından itibaren", ytq:"The Weeknd Blinding Lights" },
+  { name:"Sprint #1 — tam gaz",         phase:"SPRİNT",     type:"work",    dur:60,  bpm:"155–165 bpm", lvl:"L8",  music:"Eminem — Till I Collapse",         mtime:"başından itibaren", ytq:"Eminem Till I Collapse" },
+  { name:"Aktif toparlanma",            phase:"TOPARLANMA", type:"recover", dur:120, bpm:"110–120 bpm", lvl:"L4",  music:"Calvin Harris — Summer",           mtime:"1:00'dan itibaren", ytq:"Calvin Harris Summer" },
+  { name:"Sprint #2 — daha sert",       phase:"SPRİNT",     type:"work",    dur:90,  bpm:"160–170 bpm", lvl:"L9",  music:"Kanye West — POWER",               mtime:"başından itibaren", ytq:"Kanye West POWER" },
+  { name:"Aktif toparlanma",            phase:"TOPARLANMA", type:"recover", dur:150, bpm:"110–120 bpm", lvl:"L4",  music:"Pharrell Williams — Happy",        mtime:"0:30'dan itibaren", ytq:"Pharrell Williams Happy" },
+  { name:"Sprint #3 — TEPE",            phase:"SPRİNT",     type:"work",    dur:90,  bpm:"165–175 bpm", lvl:"L10", music:"Metallica — Master of Puppets",    mtime:"1:00'dan itibaren", ytq:"Metallica Master of Puppets" },
+  { name:"Aktif toparlanma — uzun",     phase:"TOPARLANMA", type:"recover", dur:210, bpm:"105–115 bpm", lvl:"L3",  music:"Avicii — Wake Me Up",              mtime:"başından itibaren", ytq:"Avicii Wake Me Up" },
+  { name:"Sprint #4 — aşağı pyramid",  phase:"SPRİNT",     type:"work",    dur:90,  bpm:"160–170 bpm", lvl:"L9",  music:"Imagine Dragons — Believer",       mtime:"0:30'dan itibaren", ytq:"Imagine Dragons Believer" },
+  { name:"Aktif toparlanma",            phase:"TOPARLANMA", type:"recover", dur:90,  bpm:"110–120 bpm", lvl:"L4",  music:"Kygo — Firestone",                 mtime:"başından itibaren", ytq:"Kygo Firestone" },
+  { name:"Sprint #5 — son hamle",       phase:"SPRİNT",     type:"work",    dur:90,  bpm:"155–165 bpm", lvl:"L8",  music:"Eminem — Lose Yourself",           mtime:"başından itibaren", ytq:"Eminem Lose Yourself" },
+  { name:"Aktif toparlanma",            phase:"TOPARLANMA", type:"recover", dur:120, bpm:"110–120 bpm", lvl:"L4",  music:"Coldplay — Viva la Vida",          mtime:"başından itibaren", ytq:"Coldplay Viva la Vida" },
+  { name:"Tempo düşürme",              phase:"SOĞUMA",     type:"cooldown",dur:150, bpm:"115–120 bpm", lvl:"L3",  music:"Ed Sheeran — Shape of You",        mtime:"başından itibaren", ytq:"Ed Sheeran Shape of You" },
+  { name:"Hafif pedal — nefes normala",phase:"SOĞUMA",     type:"cooldown",dur:150, bpm:"95–105 bpm",  lvl:"L2",  music:"Jack Johnson — Better Together",   mtime:"başından itibaren", ytq:"Jack Johnson Better Together" },
 ];
 
-const typeColors = { warmup: "#1DB87A", work: "#E8372A", recover: "#2A7AE8", cooldown: "#E89B2A" };
+const colors = { warmup:"#1DB87A", work:"#E8372A", recover:"#2A7AE8", cooldown:"#E89B2A" };
 
-let currentIdx = 0;
-let remaining = 0;
-let totalElapsed = 0;
-let paused = false;
-let timer = null;
-let wakelock = null;
+let idx=0, remaining=0, totalElapsed=0, paused=false, timer=null, wakelock=null;
 
-function fmt(s) {
-  const m = Math.floor(s / 60);
-  const sec = s % 60;
-  return `${m}:${String(sec).padStart(2,'0')}`;
+function fmt(s){ return `${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`; }
+
+function openMusic(){
+  const q = encodeURIComponent(intervals[idx].ytq);
+  location.href = `https://music.youtube.com/search?q=${q}`;
 }
 
-function updateRing(cur, total) {
-  const pct = cur / total;
-  const offset = CIRC * pct;
-  document.getElementById('ring-fill').style.strokeDashoffset = offset;
-}
-
-function setPhaseColor(type) {
-  const c = typeColors[type] || "#E8372A";
+function setColor(type){
+  const c = colors[type] || "#E8372A";
   document.getElementById('ring-fill').style.stroke = c;
   document.getElementById('phase-label').style.color = c;
-  document.getElementById('progress-bar').style.background = c;
+  document.getElementById('prog-bar').style.background = c;
 }
 
-function renderInterval(idx) {
-  const iv = intervals[idx];
+function renderInterval(i){
+  const iv = intervals[i];
   document.getElementById('phase-label').textContent = iv.phase;
-  document.getElementById('interval-name').textContent = iv.name;
-  document.getElementById('badge-bpm').textContent = iv.bpm;
-  document.getElementById('badge-lvl').textContent = iv.level;
+  document.getElementById('iv-name').textContent = iv.name;
+  document.getElementById('b-bpm').textContent = iv.bpm;
+  document.getElementById('b-lvl').textContent = iv.lvl;
   document.getElementById('music-title').textContent = iv.music;
-  document.getElementById('music-time').textContent = iv.musicTime;
-  setPhaseColor(iv.type);
-  remaining = iv.duration;
-  updateRing(0, iv.duration);
+  document.getElementById('music-time').textContent = iv.mtime;
+  setColor(iv.type);
+  remaining = iv.dur;
+  updateRing(0, iv.dur);
 
-  // next
-  const next = intervals[idx + 1];
-  if (next) {
+  const next = intervals[i+1];
+  if(next){
     document.getElementById('next-name').textContent = next.name;
-    document.getElementById('next-dot').style.background = typeColors[next.type];
+    document.getElementById('next-dot').style.background = colors[next.type];
     document.getElementById('next-strip').style.display = 'flex';
   } else {
     document.getElementById('next-strip').style.display = 'none';
   }
 
-  // flash music card on new interval
   const card = document.getElementById('music-card');
-  card.classList.remove('flash');
-  void card.offsetWidth;
-  card.classList.add('flash');
+  card.classList.remove('flash'); void card.offsetWidth; card.classList.add('flash');
 
-  // pulse ring during work
-  const ringWrap = document.getElementById('ring-wrap');
-  if (iv.type === 'work') {
-    ringWrap.classList.add('pulse');
-  } else {
-    ringWrap.classList.remove('pulse');
-  }
+  const rw = document.getElementById('ring-wrap');
+  iv.type === 'work' ? rw.classList.add('pulse') : rw.classList.remove('pulse');
 }
 
-function updateDisplay() {
+function updateRing(elapsed, total){
+  document.getElementById('ring-fill').style.strokeDashoffset = CIRC * (elapsed / total);
+}
+
+function updateDisplay(){
   document.getElementById('countdown').textContent = fmt(remaining);
-  const iv = intervals[currentIdx];
-  updateRing(iv.duration - remaining, iv.duration);
-
-  // total progress
-  const totalDuration = intervals.reduce((a,b) => a + b.duration, 0);
-  const pct = (totalElapsed / totalDuration) * 100;
-  document.getElementById('progress-bar').style.width = pct + '%';
-  document.getElementById('total-elapsed').textContent = fmt(totalElapsed);
+  const iv = intervals[idx];
+  updateRing(iv.dur - remaining, iv.dur);
+  const total = intervals.reduce((a,b)=>a+b.dur,0);
+  document.getElementById('prog-bar').style.width = (totalElapsed/total*100)+'%';
+  document.getElementById('elapsed').textContent = fmt(totalElapsed);
 }
 
-function tick() {
-  if (paused) return;
-  remaining--;
-  totalElapsed++;
+function tick(){
+  if(paused) return;
+  remaining--; totalElapsed++;
   updateDisplay();
-
-  if (remaining <= 0) {
-    currentIdx++;
-    if (currentIdx >= intervals.length) {
-      endWorkout();
-      return;
-    }
-    renderInterval(currentIdx);
+  if(remaining <= 0){
+    idx++;
+    if(idx >= intervals.length){ endWorkout(); return; }
+    renderInterval(idx);
   }
 }
 
-function startWorkout() {
-  document.getElementById('splash').style.opacity = '0';
-  setTimeout(() => {
-    document.getElementById('splash').style.display = 'none';
-    document.getElementById('app').style.display = 'flex';
-  }, 500);
-
-  currentIdx = 0;
-  totalElapsed = 0;
-  paused = false;
-  renderInterval(0);
-  updateDisplay();
+function startWorkout(){
+  const sp = document.getElementById('splash');
+  sp.style.opacity = '0';
+  setTimeout(()=>{ sp.style.display='none'; document.getElementById('app').style.display='flex'; }, 500);
+  idx=0; totalElapsed=0; paused=false;
+  renderInterval(0); updateDisplay();
   timer = setInterval(tick, 1000);
-
-  // Request wake lock to keep screen on
-  if ('wakeLock' in navigator) {
-    navigator.wakeLock.request('screen').then(wl => { wakelock = wl; }).catch(() => {});
-  }
+  if('wakeLock' in navigator) navigator.wakeLock.request('screen').then(wl=>wakelock=wl).catch(()=>{});
 }
 
-function togglePause() {
+function togglePause(){
   paused = !paused;
   document.getElementById('btn-pause').textContent = paused ? '▶ Devam' : '⏸ Duraklat';
 }
 
-function skipInterval() {
-  currentIdx++;
-  if (currentIdx >= intervals.length) { endWorkout(); return; }
-  totalElapsed += remaining;
-  renderInterval(currentIdx);
-  updateDisplay();
+function skipInterval(){
+  totalElapsed += remaining; idx++;
+  if(idx >= intervals.length){ endWorkout(); return; }
+  renderInterval(idx); updateDisplay();
 }
 
-function endWorkout() {
+function endWorkout(){
   clearInterval(timer);
-  if (wakelock) wakelock.release();
+  if(wakelock) wakelock.release();
   document.getElementById('app').style.display = 'none';
-  const done = document.getElementById('done');
-  done.style.display = 'flex';
+  document.getElementById('done').style.display = 'flex';
 }
 
-function restartWorkout() {
+function restartWorkout(){
   document.getElementById('done').style.display = 'none';
-  currentIdx = 0;
-  totalElapsed = 0;
-  paused = false;
+  idx=0; totalElapsed=0; paused=false;
   document.getElementById('app').style.display = 'flex';
-  renderInterval(0);
-  updateDisplay();
+  renderInterval(0); updateDisplay();
   timer = setInterval(tick, 1000);
 }
 </script>
